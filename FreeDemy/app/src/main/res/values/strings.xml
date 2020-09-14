@@ -10,4 +10,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+    <string name="content_description_media">freedemy_logo</string>
+    <string name="freedemyLAbel">FreeDemy</string>
+    <string name="devise">Apprendre gratuitement et librement</string>
 </resources>
