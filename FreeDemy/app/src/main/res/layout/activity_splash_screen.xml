@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_screen_drawable">
+    android:background="@color/themeColor">
+<!--    android:background="@drawable/splash_screen_drawable">-->
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/logo"

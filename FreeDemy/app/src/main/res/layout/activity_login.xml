@@ -107,7 +107,7 @@
                     style="@style/viewParent.headerText.NoMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Projet mobile - ETU000610"
+                    android:text="@string/copyright"
                     android:layout_weight="6"
                     android:textSize="12sp"
                     android:textAlignment="center"/>

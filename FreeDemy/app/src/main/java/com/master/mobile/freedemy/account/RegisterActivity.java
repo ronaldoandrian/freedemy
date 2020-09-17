@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void onRegisterClick(View view) {
         Handler handler = new Handler();
-        CircularProgressButton btn = findViewById(R.id.cirLoginButton);
+        CircularProgressButton btn = findViewById(R.id.cirRegisterButton);
         btn.startAnimation();
 
         handler.postDelayed(() -> {
