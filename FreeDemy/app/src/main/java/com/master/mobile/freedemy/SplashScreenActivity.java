@@ -6,6 +6,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.master.mobile.freedemy.account.LoginActivity;
 import com.master.mobile.freedemy.utils.Utils;
 
@@ -16,11 +19,13 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class SplashScreenActivity extends AppCompatActivity {
     private SharedPreferences preferences;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        mAuth = FirebaseAuth.getInstance();
         try {
             GifDrawable gifFromAssets = new GifDrawable( getAssets(), "giphy.gif" );
             GifImageView gifImage = findViewById(R.id.logo);
@@ -32,22 +37,17 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     public void checkLoginStatus() {
-        Handler handler = new Handler();
-        preferences = getSharedPreferences(Utils.SHARED_SESSION, MODE_PRIVATE);
-        boolean     isConnected = preferences.getBoolean(Utils.USER_CONNECTED, false);
+        FirebaseUser user = mAuth.getCurrentUser();
+        boolean     isConnected = user != null;
 
         if (isConnected) {
-            handler.postDelayed(() -> {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }, 1000);
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
         } else {
-            handler.postDelayed(() -> {
-                Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }, 2000);
+            Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 

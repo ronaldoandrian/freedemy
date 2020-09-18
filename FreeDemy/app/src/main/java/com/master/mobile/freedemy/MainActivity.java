@@ -1,5 +1,8 @@
 package com.master.mobile.freedemy;
 
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -7,11 +10,16 @@ import android.view.View;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.master.mobile.freedemy.account.LoginActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -27,43 +35,22 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private BottomNavigationView bottomNavigationView;
     private static final int MODE_DARK = 0;
     private static final int MODE_LIGHT = 1;
-
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment fragment;
-            switch (item.getItemId()) {
-                case R.id.navigationMyProfile:
-                    return true;
-                case R.id.navigationMyCourses:
-                    return true;
-                case R.id.navigationHome:
-                    return true;
-                case  R.id.navigationSearch:
-                    return true;
-                case  R.id.navigationMenu:
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                    drawer.openDrawer(GravityCompat.START);
-                    return true;
-            }
-            return false;
-        }
-    };
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setDarkMode(getWindow());
-
+        mAuth = FirebaseAuth.getInstance();
+        checkLoginStatus();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -86,9 +73,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         bottomNavigationView.setSelectedItemId(R.id.navigationHome);
 
-        //handling floating action menu
+        initComponent();
+    }
 
+    private  void initComponent() {
+        FirebaseUser user = mAuth.getCurrentUser();
 
+        for (UserInfo profile : user.getProviderData()) {
+            CircleImageView image = findViewById(R.id.profileCircleImageView);
+            image.setImageURI(profile.getPhotoUrl());
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            View headerView = navigationView.getHeaderView(0);
+            TextView username = (TextView) headerView.findViewById(R.id.userNameLabel);
+            username.setText(profile.getDisplayName());
+
+            TextView usermail = headerView.findViewById(R.id.userMailLabel);
+            usermail.setText(profile.getEmail());
+        }
+    }
+
+    private void checkLoginStatus() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null) {
+            notConnected();
+        }
+    }
+
+    private void notConnected() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Non connecté");
+        builder.setMessage("Vous n'êtes pas connecté ou votre session a été expiré.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", (dialog, id) -> {
+            startActivity(new Intent(this, LoginActivity.class));
+            overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -100,6 +123,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.navigationMyProfile:
+                    return true;
+                case R.id.navigationMyCourses:
+                    return true;
+                case R.id.navigationHome:
+                    return true;
+                case  R.id.navigationSearch:
+                    return true;
+                case  R.id.navigationMenu:
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.openDrawer(GravityCompat.START);
+                    return true;
+            }
+            return false;
+        }
+    };
 
 
     @SuppressWarnings("StatementWithEmptyBody")

@@ -8,6 +8,7 @@
     <string name="action_settings">Settings</string>
     <string name="login_email_hint">Email</string>
     <string name="login_password_hint">Mot de passe</string>
+    <string name="login_confirm_password_hint">Confirmer votre mot de passe</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
